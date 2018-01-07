@@ -1,5 +1,0 @@
-E:\Project\lms-app\Lms\RequestModel\bin\Debug\RequestModel.dll
-E:\Project\lms-app\Lms\RequestModel\bin\Debug\RequestModel.pdb
-E:\Project\lms-app\Lms\RequestModel\obj\Debug\RequestModel.csproj.CoreCompileInputs.cache
-E:\Project\lms-app\Lms\RequestModel\obj\Debug\RequestModel.dll
-E:\Project\lms-app\Lms\RequestModel\obj\Debug\RequestModel.pdb

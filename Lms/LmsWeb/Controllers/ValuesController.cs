@@ -7,6 +7,7 @@ using System.Web.Http;
 
 namespace LmsWeb.Controllers
 {
+    [Authorize]
     public class ValuesController : ApiController
     {
         // GET api/values
