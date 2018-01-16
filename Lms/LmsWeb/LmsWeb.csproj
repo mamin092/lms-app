@@ -231,8 +231,11 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\CourseController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
+    <Compile Include="Filters\EntitySaveFilterAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -329,6 +332,24 @@
     <EmbeddedResource Include="Migrations\201801070928508_UserV1.resx">
       <DependentUpon>201801070928508_UserV1.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Model\Model.csproj">
+      <Project>{DF62D3B6-1E1A-45AE-BBBB-40E6972D8A7A}</Project>
+      <Name>Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RequestModel\RequestModel.csproj">
+      <Project>{a54e34c1-69d0-4cce-a504-48af1caba88d}</Project>
+      <Name>RequestModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Service\Service.csproj">
+      <Project>{f266832f-0457-4597-b390-60946c4c1007}</Project>
+      <Name>Service</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ViewModel\ViewModel.csproj">
+      <Project>{fb03ff6b-514e-440c-87e8-2255b0479a34}</Project>
+      <Name>ViewModel</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
