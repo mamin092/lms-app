@@ -3,15 +3,15 @@
         class UserInfo {
         token: string;
         userName: string;
-        landingRoute: string;
         resources: string[];
         requestId: string;
+        role: string;
 
     }
 
     export 
         class RegisterRequest {
-        email: string;
+        email: string   
         password: string;
         confirmPassword: string;
 
@@ -25,6 +25,8 @@
         commandUrl: string;
         subUrl: string;
         storageService: LocalStorageService;
+
+
         static $inject = ["WebService", "$q", "LocalStorageService"];
 
         constructor(baseRepository: WebService, q: angular.IQService, storageService: LocalStorageService) {
@@ -57,9 +59,11 @@
             let successCallback = function (response) {
                 console.log('AccountService successCallback');
                 let info: UserInfo = new UserInfo();
-                info.landingRoute = response.data.landingRoute;
+                
                 info.userName = response.data.userName;
                 info.resources = response.data.resources;
+                info.role = response.data.role;
+                info.token = response.data.token;
                 self.storageService.save(LocalStorageKeys.UserInfo, info);
                 deferred.resolve(response.data);
             }

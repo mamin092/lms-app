@@ -1,6 +1,7 @@
 ﻿module App {
 
-    class HomeController {
+    class HomeController implements angular.IController {
+        $onInit(): void { }
         static $inject = ["$state", "$scope", "$rootScope", "LocalStorageService"];
 
         stateService: angular.ui.IStateService;
@@ -41,5 +42,5 @@
             }
         }
     }
-    angular.module('app').controller('HomeController', (HomeController) as any);
+    angular.module('app').controller('HomeController', HomeController);
 }

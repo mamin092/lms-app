@@ -1,5 +1,4 @@
-﻿using LmsWeb.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,106 +6,153 @@ using System.Threading.Tasks;
 
 namespace SeedDataApp
 {
+    using System.IO;
+    using System.Security.AccessControl;
+
     using LmsWeb;
+    using LmsWeb.Models;
+
     using Microsoft.AspNet.Identity;
     using Microsoft.AspNet.Identity.EntityFramework;
 
+    using Newtonsoft.Json;
     class Program
     {
+      const  string admin = "mnurulamin092@gmail.com";
         static void Main(string[] args)
         {
+            ApplicationDbContext context = ApplicationDbContext.Create();
+          
 
-            ApplicationDbContext db = ApplicationDbContext.Create();
-            IUserStore<ApplicationUser> store = new UserStore<ApplicationUser>(db);
-            ApplicationUserManager manager = new ApplicationUserManager(store);
-            string superAdminRoleId = GetRoleId("SuperAdmin", db);
+            string allText = File.ReadAllText("seed-data.json");
+            SeedData seedData = JsonConvert.DeserializeObject<SeedData>(allText);
 
-            string superAdminUsername = "mnurulamin092@gmail.com";
-
-
-            if (manager.FindByName(superAdminUsername)==null)
+            Console.WriteLine("Operating on seed data roles: \n\n");
+            foreach (var roleName in seedData.Roles)
             {
-                ApplicationUser user = new ApplicationUser()
+                ApplicationRole role = context.ApplicationRoles.FirstOrDefault(x => x.Name == roleName);
+                if (role == null)
                 {
-                    Email = superAdminUsername,
-                    UserName = superAdminUsername,
-                    Created = DateTime.Now,
-                    CreatedBy = superAdminUsername,
-                    Modified = DateTime.Now,
-                    ModifiedBy = superAdminUsername,
-                    EmailConfirmed = true,
-                    IsActive = true,
-                    Id = new Guid().ToString(),
-                    PhoneNumber ="01817677741",
-                    RoleId = superAdminRoleId
-                
-               
-                };
-                IdentityResult result = manager.Create(user, "Pass@123");
+                    context.Roles.Add(new ApplicationRole(roleName));
+                    context.SaveChanges();
+                    Console.WriteLine("Roles: " + roleName);
+                }
             }
 
-            string teacher = "teacher1@cclms.com";
-            string student = "student@cclms.com";
-
-            string teacherRoleId = GetRoleId("Teacher", db);
-            string studentRoleId = GetRoleId("Student", db);
-
-            if (manager.FindByName(teacher) == null)
+            for (var index = 0; index < seedData.Users.Count; index++)
             {
-                ApplicationUser user = new ApplicationUser()
+                var seedUser = seedData.Users[index];
+                ApplicationUserManager manager = new ApplicationUserManager(new UserStore<ApplicationUser>(context));
+                ApplicationUser user = manager.FindByName(seedUser.UserName);
+                if (user == null)
                 {
-                    Id = Guid.NewGuid().ToString(),
-                    Email = teacher,
-                    UserName = teacher,
-                    Created = DateTime.Now,
-                    CreatedBy = superAdminUsername,
-                    Modified = DateTime.Now,
-                    ModifiedBy = superAdminUsername,
-                    EmailConfirmed = true,
-                    PhoneNumber = "01828477742",
-                    RoleId = teacherRoleId,
-                };
+                    user = new ApplicationUser()
+                    {
+                        Email = seedUser.UserName,
+                        UserName = seedUser.UserName,
+                        EmailConfirmed = true,
+                        PhoneNumber = index.ToString(),
+                        IsActive = true,
+                        RoleId = GetRoleId(seedUser.Role, context),
+                        Created = DateTime.Now,
+                        Modified = DateTime.Now,
+                        CreatedBy = admin,
+                        ModifiedBy = admin
+                    };
 
-                IdentityResult result = manager.Create(user, "Pass@123");
+                    IdentityResult result = manager.Create(user, seedUser.Password);
+                    if (result.Succeeded)
+                    {
+                        manager.AddToRole(user.Id, seedUser.Role);
+                    }
 
+                    Console.WriteLine("Adding User: " + user.UserName);
+                }
+
+                var roles = manager.GetRoles(user.Id);
+                if (roles.Count == 0)
+                {
+                    Console.WriteLine("Adding user role - " + seedUser.Role);
+                    manager.AddToRole(user.Id, seedUser.Role);
+                }
             }
 
-            if (manager.FindByName(student) == null)
+            var dbRoles = context.ApplicationRoles.ToList();
+            Console.WriteLine("operating on resources: \n\n");
+            List<SeedResource> resources = seedData.Resources;
+            //AddPermissions(resources, context, dbRoles);
+
+            foreach (var resource in resources)
             {
-                ApplicationUser user = new ApplicationUser()
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    Email = student,
-                    UserName = student,
-                    Created = DateTime.Now,
-                    CreatedBy = superAdminUsername,
-                    Modified = DateTime.Now,
-                    ModifiedBy = superAdminUsername,
-                    EmailConfirmed = true,
-
-                    IsActive = true,
-                    PhoneNumber = "0181767773",
-                    RoleId = studentRoleId
-
-                };
-
-                IdentityResult result = manager.Create(user, "Pass@123");
+                Console.WriteLine(resource.Name);
             }
 
-            Console.WriteLine("Dode");
+
+            Console.WriteLine("Done");
+
             Console.Read();
         }
 
-            private static string GetRoleId(string roleName, ApplicationDbContext db)
+        private static string GetRoleId(string roleName, ApplicationDbContext db)
+        {
+            IdentityRole role = db.Roles.FirstOrDefault(x => x.Name == roleName);
+            if (role == null)
             {
-                IdentityRole role = db.Roles.FirstOrDefault(x => x.Name == roleName);
-                if (role == null)
-                {
-                    role = new IdentityRole(roleName);
-                    db.Roles.Add(role);
-                    db.SaveChanges();
-                }
-                return role.Id;
+                role = new IdentityRole(roleName);
+                db.Roles.Add(role);
+                db.SaveChanges();
             }
+
+            return role.Id;
+        }
+
+
+        private static void AddPermissions(List<SeedResource> resources, ApplicationDbContext context, List<ApplicationRole> dbRoles)
+        {
+            foreach (var seedResource in resources)
+            {
+                var dbResource = context.AspNetResources.FirstOrDefault(x => x.Name == seedResource.Name);
+                    
+                if (dbResource == null)
+                {
+                    dbResource = new AspNetResource() { Name = seedResource.Name,
+                        Id = Guid.NewGuid().ToString(),
+                        Created = DateTime.Now,
+                        Modified = DateTime.Now,
+                        CreatedBy = admin,
+                        ModifiedBy = admin
+                    };
+                    context.AspNetResources.Add(dbResource);
+                    context.SaveChanges();
+                    Console.WriteLine("Adding Resource: " + dbResource.Name);
+                }
+
+                var allowedRoles = seedResource.Permissions.ToList();
+                foreach (string allowedRole in allowedRoles)
+                {
+                    var dbRole = dbRoles.First(x => x.Name == allowedRole);
+                    var permission =
+                        context.AspNetPermission.FirstOrDefault(x => x.RoleId == dbRole.Id && x.ResourceId == dbResource.Id);
+                    if (permission == null)
+                    {
+                        permission = new AspNetPermission()
+                        {
+                            IsAllowed = true,
+                            ResourceId = dbResource.Id,
+                            RoleId = dbRole.Id,
+                            Id = Guid.NewGuid().ToString(),
+                            Created = DateTime.Now,
+                            Modified = DateTime.Now,
+                            CreatedBy = admin,
+                            ModifiedBy = admin
+                        };
+                        context.AspNetPermission.Add(permission);
+                        context.SaveChanges();
+                        Console.WriteLine("Adding permission : resource - " + dbResource.Name + "\t role - " + dbRole.Name);
+                    }
+                }
+            }
+        }
+    
     }
 }

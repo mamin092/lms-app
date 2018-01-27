@@ -16,6 +16,7 @@ var App;
             self.$rootScope.$on("signedin", function () { self.signedInSuccessfully(); });
             self.$rootScope.$on("signedout", function () { self.signedOutSuccessfully(); });
         }
+        NavController.prototype.$onInit = function () { };
         NavController.prototype.signedInSuccessfully = function () {
             var self = this;
             console.log('signedInSuccessfully: ');
@@ -27,11 +28,7 @@ var App;
             }
             // set the data to variable , that will automatically display the data to view. 
             self.isSignedIn = true;
-            if (userInfo.landingRoute == null) {
-                userInfo.landingRoute = "root.home";
-                self.storageService.save(App.LocalStorageKeys.UserInfo, userInfo);
-            }
-            self.stateService.go(userInfo.landingRoute);
+            self.stateService.go('root.home');
         };
         NavController.prototype.signedOutSuccessfully = function () {
             console.log('signedOutSuccessfully: ');

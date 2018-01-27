@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8B16CA7A-4B9E-4AE2-8C9A-D5C75589B32B}</ProjectGuid>
+    <ProjectGuid>{8001678C-5B9C-4F73-A897-35B9B5F5D4C0}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>SeedDataApp</RootNamespace>
     <AssemblyName>SeedDataApp</AssemblyName>
@@ -78,12 +78,14 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SeedData.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
+    <None Include="seed-data.json" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LmsWeb\LmsWeb.csproj">

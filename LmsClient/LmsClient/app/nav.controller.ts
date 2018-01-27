@@ -1,7 +1,8 @@
 ﻿module App {
     "use strict";
 
-    class NavController {
+    class NavController implements angular.IController {
+        $onInit(): void { }
 
         stateService: angular.ui.IStateService;
         isSignedIn: boolean;
@@ -45,14 +46,10 @@
 
             // set the data to variable , that will automatically display the data to view. 
             self.isSignedIn = true;
-            if (userInfo.landingRoute == null) {
-                userInfo.landingRoute = "root.home";
-                self.storageService.save(LocalStorageKeys.UserInfo, userInfo);
-            }
-
-            self.stateService.go(userInfo.landingRoute);
+          
+            self.stateService.go('root.home');
         }
-
+                
         signedOutSuccessfully(): void {
             console.log('signedOutSuccessfully: ');
             let self = this;
@@ -79,5 +76,5 @@
 
     }
 
-    angular.module("app").controller("NavController", NavController as any);
+    angular.module("app").controller("NavController", NavController);
 } 

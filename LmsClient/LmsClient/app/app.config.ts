@@ -1,8 +1,9 @@
 ﻿module App {
 
     class Configuration {
-        static $static = ["$stateProvider", "$urlRouterProvider"];
-        constructor(stateProvider: angular.ui.IStateProvider, urlRouteProvider: angular.ui.IUrlRouterProvider) {
+        static $inject = ["$stateProvider", "$urlRouterProvider"];
+        constructor(stateProvider: angular.ui.IStateProvider,
+            urlRouteProvider: angular.ui.IUrlRouterProvider) {
             urlRouteProvider.otherwise("/");
 
             stateProvider

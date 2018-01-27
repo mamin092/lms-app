@@ -10,6 +10,8 @@ using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
 using LmsWeb.Models;
+using System.Data.Entity;
+using Newtonsoft.Json;
 
 namespace LmsWeb.Providers
 {
@@ -29,7 +31,12 @@ namespace LmsWeb.Providers
 
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
+            context.OwinContext.Request.Headers.Add("Access-Control-Allow-Origin", new[] { "*" });
+            context.OwinContext.Response.Headers.Add("Acess-Control-Allow-Origin", new[] { "*" });
+
             var userManager = context.OwinContext.GetUserManager<ApplicationUserManager>();
+
+            var database = context.OwinContext.Get<ApplicationDbContext>();
 
             ApplicationUser user = await userManager.FindAsync(context.UserName, context.Password);
 
@@ -44,11 +51,13 @@ namespace LmsWeb.Providers
             ClaimsIdentity cookiesIdentity = await user.GenerateUserIdentityAsync(userManager,
                 CookieAuthenticationDefaults.AuthenticationType);
 
-            AuthenticationProperties properties = CreateProperties(user.UserName);
+            AuthenticationProperties properties = CreateProperties(user, userManager, database);
             AuthenticationTicket ticket = new AuthenticationTicket(oAuthIdentity, properties);
             context.Validated(ticket);
             context.Request.Context.Authentication.SignIn(cookiesIdentity);
         }
+
+
 
         public override Task TokenEndpoint(OAuthTokenEndpointContext context)
         {
@@ -90,9 +99,29 @@ namespace LmsWeb.Providers
         {
             IDictionary<string, string> data = new Dictionary<string, string>
             {
-                { "userName", userName }
+                { "userName", userName },
+                {"random",Guid.NewGuid().ToString() }
             };
             return new AuthenticationProperties(data);
+        }
+
+        private static AuthenticationProperties CreateProperties(ApplicationUser user, ApplicationUserManager userManager, ApplicationDbContext database)
+        {
+            IDictionary<string, string> dictionary = new Dictionary<string, string>();
+            dictionary.Add("userName", user.UserName);
+            dictionary.Add("role", user.Role.Name);
+            string resource = GetResource(user.RoleId, database);
+            AuthenticationProperties properties = new AuthenticationProperties(dictionary);
+            return properties;
+        }
+
+        private static string GetResource(string userRoleId, ApplicationDbContext database)
+        {
+            var permissions = database.AspNetPermission.Where(x => x.RoleId == userRoleId && x.IsAllowed).Include
+                (x => x.Resource).Select(x => x.Resource).Select(x => x.Name).ToList();
+            string serializeObject = JsonConvert.SerializeObject(permissions);
+            return serializeObject;
+
         }
     }
 }

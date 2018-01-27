@@ -76,7 +76,7 @@ var App;
                 controllerAs: "vm"
             });
         }
-        Configuration.$static = ["$stateProvider", "$urlRouterProvider"];
+        Configuration.$inject = ["$stateProvider", "$urlRouterProvider"];
         return Configuration;
     }());
     angular.module('app', ["ui.router"]);

@@ -14,6 +14,7 @@ var App;
             }
             rootScope.$on("signedOut", function () { self.signedOutSuccessfully(); });
         }
+        HomeController.prototype.$onInit = function () { };
         HomeController.prototype.signedOutSuccessfully = function () {
             this.isSignedIn = false;
             this.message = "";
@@ -29,6 +30,6 @@ var App;
         HomeController.$inject = ["$state", "$scope", "$rootScope", "LocalStorageService"];
         return HomeController;
     }());
-    angular.module('app').controller('HomeController', (HomeController));
+    angular.module('app').controller('HomeController', HomeController);
 })(App || (App = {}));
 //# sourceMappingURL=HomeController.js.map

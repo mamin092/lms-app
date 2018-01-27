@@ -1,15 +1,17 @@
 ﻿module App {
 
-    class RegistrationController {
+    class RegistrationController implements angular.IController {
+        $onInit(): void { }
         constructor() {
             console.log('i am in register');
         }
     }
 
-    angular.module('app').controller('RegistrationController', (RegistrationController) as any)
+    angular.module('app').controller('RegistrationController', RegistrationController)
 
     export 
-        class SigninController {
+        class SigninController implements angular.IController {
+        $onInit(): void { }
 
         web: WebService;
         account: AccountService;
@@ -73,7 +75,7 @@
     }
 
 
-    angular.module('app').controller('SigninController', (SigninController) as any);
+    angular.module('app').controller('SigninController', SigninController);
 }
 
 

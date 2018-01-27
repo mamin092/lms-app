@@ -69,6 +69,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <Content Include="app\account\AccountControllers.js" />
+    <Content Include="app\account\AccountService.js" />
     <Content Include="partials\account\register.tpl.html" />
     <Content Include="partials\account\signin.tpl.html" />
     <Content Include="partials\course\teacher-course-entry.tpl.html" />

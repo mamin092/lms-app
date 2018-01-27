@@ -9,7 +9,7 @@
         static UserAuthenticationUrl = AppConstants.BaseUrl + "token";
         static Account = "Account/";
     }
-
+        
     export 
         class WebService {
         private qService: angular.IQService;

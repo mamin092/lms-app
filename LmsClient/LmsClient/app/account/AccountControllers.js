@@ -4,9 +4,10 @@ var App;
         function RegistrationController() {
             console.log('i am in register');
         }
+        RegistrationController.prototype.$onInit = function () { };
         return RegistrationController;
     }());
-    angular.module('app').controller('RegistrationController', (RegistrationController));
+    angular.module('app').controller('RegistrationController', RegistrationController);
     var SigninController = /** @class */ (function () {
         function SigninController(state, scope, rootScope, localStorageService, account, web) {
             console.log('i am in signin');
@@ -21,6 +22,7 @@ var App;
             }
             this.user = new App.RegisterRequest();
         }
+        SigninController.prototype.$onInit = function () { };
         SigninController.prototype.signin = function () {
             // call web service 
             var self = this;
@@ -52,6 +54,6 @@ var App;
         return SigninController;
     }());
     App.SigninController = SigninController;
-    angular.module('app').controller('SigninController', (SigninController));
+    angular.module('app').controller('SigninController', SigninController);
 })(App || (App = {}));
 //# sourceMappingURL=AccountControllers.js.map
