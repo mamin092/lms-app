@@ -17,3 +17,9 @@
 /Lms/RequestModel/bin/Debug
 /Lms/SeedDataApp/obj/Debug
 /Lms/SeedDataApp/bin/Debug
+/Lms
+/LmsClient/.vs
+/LmsClient/LmsClient/bin
+/LmsClient/LmsClient/obj/Debug
+/LmsClient/packages
+/LmsClient/LmsClient/LmsClient.csproj.user
