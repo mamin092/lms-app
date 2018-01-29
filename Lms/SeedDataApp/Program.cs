@@ -18,11 +18,11 @@ namespace SeedDataApp
     using Newtonsoft.Json;
     class Program
     {
-      const  string admin = "mnurulamin092@gmail.com";
+        const string admin = "oneonlyuser@gmail.com";
         static void Main(string[] args)
         {
             ApplicationDbContext context = ApplicationDbContext.Create();
-          
+
 
             string allText = File.ReadAllText("seed-data.json");
             SeedData seedData = JsonConvert.DeserializeObject<SeedData>(allText);
@@ -80,7 +80,7 @@ namespace SeedDataApp
             var dbRoles = context.ApplicationRoles.ToList();
             Console.WriteLine("operating on resources: \n\n");
             List<SeedResource> resources = seedData.Resources;
-            //AddPermissions(resources, context, dbRoles);
+            AddPermissions(resources, context, dbRoles);
 
             foreach (var resource in resources)
             {
@@ -109,13 +109,16 @@ namespace SeedDataApp
 
         private static void AddPermissions(List<SeedResource> resources, ApplicationDbContext context, List<ApplicationRole> dbRoles)
         {
-            foreach (var seedResource in resources)
+            foreach (SeedResource seedResource in resources)
             {
                 var dbResource = context.AspNetResources.FirstOrDefault(x => x.Name == seedResource.Name);
-                    
+
                 if (dbResource == null)
                 {
-                    dbResource = new AspNetResource() { Name = seedResource.Name,
+                    dbResource = new AspNetResource()
+                    {
+                        Name = seedResource.Name,
+                        IsPublic = seedResource.IsPublic,
                         Id = Guid.NewGuid().ToString(),
                         Created = DateTime.Now,
                         Modified = DateTime.Now,
@@ -153,6 +156,6 @@ namespace SeedDataApp
                 }
             }
         }
-    
+
     }
 }
